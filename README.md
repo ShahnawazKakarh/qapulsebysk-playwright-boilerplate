@@ -30,7 +30,7 @@
 
 | Branch | Language | Clone Command |
 |--------|----------|---------------|
-| ✅ [`main`](https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate/tree/main) ← **You are here** | **TypeScript** | `git clone https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate.git` |
+| ✅ [`master`](https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate/tree/main) ← **You are here** | **TypeScript** | `git clone https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate.git` |
 | 🟡 [`javascript`](https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate/tree/javascript) | **JavaScript** | `git clone -b javascript https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate.git` |
 
 > ⚠️ These branches are **independent** and are never merged into each other. See [BRANCHES.md](./BRANCHES.md) for full details.
@@ -328,7 +328,7 @@ Use `ci/azure-pipelines.yml` in your Azure DevOps pipeline.
 
 We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
-- TypeScript fixes/features → PR to `main`
+- TypeScript fixes/features → PR to `master`
 - JavaScript fixes/features → PR to `javascript`
 - See [BRANCHES.md](./BRANCHES.md) for branch strategy
 
