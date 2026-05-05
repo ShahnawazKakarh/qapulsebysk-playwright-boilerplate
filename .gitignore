@@ -1,0 +1,33 @@
+node_modules/
+dist/
+.env
+
+# Auth state (contains sensitive tokens)
+.auth/
+
+# Test output
+test-results/artifacts/
+test-results/*.xml
+test-results/*.json
+
+# Playwright reports
+playwright-report/*
+!playwright-report/.gitkeep
+blob-report/
+
+# Allure
+allure-results/
+allure-report/
+
+# Visual snapshots (keep baselines, ignore OS-specific ones)
+tests/visual/**/*.png
+!tests/visual/snapshots/**/*.png
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Coverage
+coverage/

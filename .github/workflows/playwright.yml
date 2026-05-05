@@ -1,0 +1,148 @@
+name: Playwright Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  checks: write
+  pull-requests: write
+
+env:
+  NODEJS_VERSION: 20
+
+jobs:
+  playwright_test:
+    name: Playwright Tests (Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
+    container:
+      image: mcr.microsoft.com/playwright:v1.46.0-jammy
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node ${{ env.NODEJS_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODEJS_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Tests (Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        env:
+          CI: true
+          BASE_URL: ${{ vars.BASE_URL || 'https://the-internet.herokuapp.com' }}
+          HOME: /root
+
+      - name: Upload blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-reports-${{ matrix.shardIndex }}
+          path: blob-report/
+          retention-days: 10
+
+  reporting:
+    name: Merge Reports & Publish
+    if: always()
+    needs: playwright_test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node ${{ env.NODEJS_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODEJS_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download all blob reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: blob-reports-*
+          merge-multiple: true
+          path: all-blob-reports
+
+      - name: Merge into JUnit XML
+        run: PLAYWRIGHT_JUNIT_OUTPUT_NAME=junit.xml npx playwright merge-reports --reporter=junit ./all-blob-reports
+
+      - name: Test Reporter
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Playwright Test Results
+          path: "**/junit.xml"
+          reporter: java-junit
+          fail-on-error: "false"
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload HTML report to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: playwright-report
+          retention-days: 14
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Comment PR with report link
+        if: always() && github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@main
+        with:
+          message: |
+            ## 🎭 Playwright Test Report
+            [View HTML Report](${{ steps.deployment.outputs.page_url }})
+            Created by **QA Pulse by SK** · [skakarh.com](https://www.skakarh.com)
+          comment_tag: playwright_report
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update_snapshots:
+    name: Update Visual Snapshots
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.46.0-jammy
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node ${{ env.NODEJS_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODEJS_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update snapshots
+        run: npx playwright test tests/visual --update-snapshots
+        env:
+          HOME: /root
+
+      - name: Commit updated snapshots
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update visual snapshots"
+          file_pattern: "tests/visual/**/*.png"

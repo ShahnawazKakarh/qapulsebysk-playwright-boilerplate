@@ -1,0 +1,112 @@
+trigger:
+  branches:
+    include:
+      - main
+      - master
+  paths:
+    exclude:
+      - "*.md"
+
+pr:
+  branches:
+    include:
+      - main
+      - master
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  NODEJS_VERSION: "20.x"
+  BASE_URL: "https://the-internet.herokuapp.com"
+
+stages:
+  - stage: QualityChecks
+    displayName: "Lint & Typecheck"
+    jobs:
+      - job: Lint
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(NODEJS_VERSION)
+            displayName: "Install Node.js"
+
+          - script: npm ci
+            displayName: "Install dependencies"
+
+          - script: npm run lint
+            displayName: "ESLint"
+
+          - script: npm run typecheck
+            displayName: "TypeScript typecheck"
+
+  - stage: TestSmoke
+    displayName: "Smoke Tests"
+    dependsOn: QualityChecks
+    jobs:
+      - job: Smoke
+        container: mcr.microsoft.com/playwright:v1.46.0-jammy
+        steps:
+          - script: npm ci
+            displayName: "Install dependencies"
+
+          - script: npm run test:smoke
+            displayName: "Run smoke tests"
+            env:
+              CI: true
+              BASE_URL: $(BASE_URL)
+              HOME: /root
+
+          - task: PublishTestResults@2
+            condition: always()
+            inputs:
+              testResultsFormat: "JUnit"
+              testResultsFiles: "test-results/junit.xml"
+              testRunTitle: "Playwright Smoke Tests"
+
+          - task: PublishPipelineArtifact@1
+            condition: always()
+            inputs:
+              targetPath: "playwright-report"
+              artifact: "playwright-smoke-report"
+
+  - stage: TestRegression
+    displayName: "Full Regression"
+    dependsOn: TestSmoke
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: Regression_Chromium
+        displayName: "Chromium"
+        container: mcr.microsoft.com/playwright:v1.46.0-jammy
+        steps:
+          - script: npm ci
+            displayName: "Install dependencies"
+          - script: npm run test:chromium
+            displayName: "Run Chromium tests"
+            env:
+              CI: true
+              HOME: /root
+
+      - job: Regression_Firefox
+        displayName: "Firefox"
+        container: mcr.microsoft.com/playwright:v1.46.0-jammy
+        steps:
+          - script: npm ci
+            displayName: "Install dependencies"
+          - script: npm run test:firefox
+            displayName: "Run Firefox tests"
+            env:
+              CI: true
+              HOME: /root
+
+      - job: Regression_WebKit
+        displayName: "WebKit"
+        container: mcr.microsoft.com/playwright:v1.46.0-jammy
+        steps:
+          - script: npm ci
+            displayName: "Install dependencies"
+          - script: npm run test:webkit
+            displayName: "Run WebKit tests"
+            env:
+              CI: true
+              HOME: /root
