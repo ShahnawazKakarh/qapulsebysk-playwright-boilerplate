@@ -24,19 +24,34 @@
 
 ---
 
+## 🌿 Choose Your Language
+
+> **Two parallel branches — same features, different language. Pick yours and clone directly.**
+
+| Branch | Language | Clone Command |
+|--------|----------|---------------|
+| ✅ [`main`](https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate/tree/main) ← **You are here** | **TypeScript** | `git clone https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate.git` |
+| 🟡 [`javascript`](https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate/tree/javascript) | **JavaScript** | `git clone -b javascript https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate.git` |
+
+> ⚠️ These branches are **independent** and are never merged into each other. See [BRANCHES.md](./BRANCHES.md) for full details.
+
+---
+
 ## 🧭 What Is This?
 
-This is a **fully wired, ready-to-fork Playwright boilerplate** built by **QA Pulse by SK**. Instead of starting from zero every project, fork this and get:
+This is a **fully wired, ready-to-fork Playwright boilerplate** built by **[QA Pulse by SK](https://www.skakarh.com)**. Instead of starting from zero every project, fork this and get:
 
 - ✅ Folder structure already decided
-- ✅ Page Object Model wired up
-- ✅ API testing layer ready
-- ✅ Visual regression configured
-- ✅ Accessibility testing with axe-core
-- ✅ 4 reporters out of the box (HTML, Allure, JUnit, JSON)
-- ✅ GitHub Actions, Jenkins, Azure DevOps pipelines
+- ✅ Page Object Model wired up with BasePage + BaseComponent
+- ✅ API testing layer with ApiClient + endpoint classes
+- ✅ Visual regression with baseline management
+- ✅ Accessibility testing — WCAG 2.1 AA, keyboard nav, ARIA, focus, labels
+- ✅ 4 reporters out of the box — HTML, Allure, JUnit, JSON + custom summary
+- ✅ GitHub Actions (sharded + GitHub Pages), Jenkins, Azure DevOps
+- ✅ Global setup/teardown with auth state management
+- ✅ Constants, Types, Logger utility
 - ✅ ESLint + Prettier + TypeScript strict mode
-- ✅ `.env` based config — no hardcoded secrets ever
+- ✅ dotenv — no hardcoded secrets ever
 
 ---
 
@@ -48,13 +63,15 @@ This is a **fully wired, ready-to-fork Playwright boilerplate** built by **QA Pu
 | 🌐 **E2E Testing** | Multi-browser: Chromium, Firefox, WebKit, Mobile |
 | 🔌 **API Testing** | ApiClient base class + endpoint layer |
 | 📸 **Visual Regression** | `toHaveScreenshot()` with baseline management |
-| ♿ **Accessibility** | axe-core WCAG 2.1 AA full-page scans |
+| ♿ **Accessibility** | axe-core WCAG 2.1 AA · keyboard nav · ARIA · focus · form labels · H1 · colour contrast |
 | 🧩 **Component Testing** | Isolated component specs |
-| 📊 **Reporting** | HTML + Allure + JUnit + JSON + Custom Summary |
-| 🏷️ **Test Tags** | `@smoke` `@regression` `@sanity` `@e2e` `@api` `@visual` `@a11y` `@component` `@critical` |
-| 🔁 **CI/CD** | GitHub Actions (sharded + GitHub Pages) · Jenkins · Azure DevOps |
+| 📊 **Reporting** | HTML + Allure + JUnit + JSON + Custom Terminal Summary |
+| 🏷️ **Test Tags** | `@smoke` `@regression` `@sanity` `@e2e` `@api` `@visual` `@a11y` `@component` `@critical` `@slow` |
+| 🔁 **CI/CD** | GitHub Actions (sharded + GitHub Pages + PR comments) · Jenkins · Azure DevOps |
 | 🛡️ **Code Quality** | ESLint · Prettier · TypeScript strict |
 | 🔐 **Config** | dotenv · `.env.example` · env-based baseURL |
+| 🪵 **Logging** | Colour-coded logger with timestamps |
+| 🔧 **Advanced** | Network interception · Data-driven tests · Drag & drop · JS alerts · Viewport testing |
 
 ---
 
@@ -70,63 +87,70 @@ qapulsebysk-playwright-boilerplate/
 │   ├── Jenkinsfile                 # Jenkins declarative pipeline
 │   └── azure-pipelines.yml        # Azure DevOps multi-browser pipeline
 │
+├── 📂 docs/
+│   ├── ARCHITECTURE.md            # Layer architecture guide
+│   ├── REPORTING.md               # Reporter setup & usage
+│   └── ACCESSIBILITY.md           # Full a11y testing guide
+│
 ├── 📂 src/
-│   ├── 📂 pages/
+│   ├── pages/
 │   │   ├── BasePage.ts             # Abstract base — all pages extend this
 │   │   ├── BaseComponent.ts        # Abstract base — all components extend this
 │   │   └── example/
-│   │       ├── HomePage.ts         # Example: home page POM
-│   │       └── LoginPage.ts        # Example: login page POM
-│   │
-│   ├── 📂 components/
-│   │   └── NavBar.ts               # Example reusable component
-│   │
-│   ├── 📂 api/
+│   │       ├── HomePage.ts
+│   │       └── LoginPage.ts
+│   ├── components/
+│   │   └── NavBar.ts
+│   ├── api/
 │   │   ├── ApiClient.ts            # Base API client (GET/POST/PUT/PATCH/DELETE)
 │   │   └── endpoints/
-│   │       └── PostsApi.ts         # Example endpoint class
-│   │
-│   ├── 📂 fixtures/
-│   │   ├── pageFixture.ts          # All page objects — single import in specs
-│   │   └── apiFixture.ts           # API client fixture
-│   │
-│   └── 📂 helpers/
-│       ├── waitHelpers.ts          # Custom wait utilities
-│       ├── randomData.ts           # Test data generators
-│       └── dateHelpers.ts          # Date/time utilities
+│   │       └── PostsApi.ts
+│   ├── fixtures/
+│   │   ├── pageFixture.ts          # Single import for all page objects
+│   │   └── apiFixture.ts
+│   ├── helpers/
+│   │   ├── a11yHelper.ts           # Full accessibility helper (10+ methods)
+│   │   ├── waitHelpers.ts
+│   │   ├── randomData.ts
+│   │   └── dateHelpers.ts
+│   ├── constants/
+│   │   └── index.ts                # URLS, ROUTES, CREDENTIALS, TIMEOUTS, TAGS
+│   ├── types/
+│   │   └── index.ts                # Shared TypeScript interfaces
+│   └── utils/
+│       └── logger.ts               # Colour-coded structured logger
 │
 ├── 📂 tests/
-│   ├── e2e/                        # End-to-end UI tests
+│   ├── e2e/
 │   │   ├── home.spec.ts
-│   │   └── login.spec.ts
-│   ├── api/                        # API tests
+│   │   ├── login.spec.ts
+│   │   └── advanced/
+│   │       └── advanced.spec.ts    # Network intercept, data-driven, drag-drop, alerts
+│   ├── api/
 │   │   └── posts.spec.ts
-│   ├── visual/                     # Visual regression tests
+│   ├── visual/
 │   │   └── homepage.visual.spec.ts
-│   ├── accessibility/              # Axe-core a11y tests
-│   │   └── homepage.a11y.spec.ts
-│   └── component/                  # Component-level tests
+│   ├── accessibility/
+│   │   └── homepage.a11y.spec.ts   # WCAG, keyboard, ARIA, focus, labels, contrast
+│   └── component/
 │       └── navbar.component.spec.ts
 │
 ├── 📂 reporters/
-│   └── jsonSummary.js              # Custom console summary reporter
+│   └── jsonSummary.js              # Custom terminal summary reporter
 │
 ├── 📂 test-data/
-│   └── users.json                  # Static test data
+│   └── users.json
 │
-├── 📂 playwright-report/           # HTML report output (gitignored)
-├── 📂 allure-results/              # Allure raw output (gitignored)
-├── 📂 test-results/                # JUnit XML + JSON (gitignored)
-│
+├── global-setup.ts                 # Login once, save auth state, create dirs
+├── global-teardown.ts
 ├── .env.example                    # Environment variables template
-├── .eslintrc.json                  # ESLint config
-├── .prettierrc.json                # Prettier config
-├── .gitignore
 ├── playwright.config.ts            # Master Playwright config
-├── tsconfig.json                   # TypeScript config
-├── package.json
+├── tsconfig.json
+├── .eslintrc.json
+├── .prettierrc.json
+├── BRANCHES.md                     # Branch guide — TS vs JS
 ├── CONTRIBUTING.md
-├── LICENSE
+├── CHANGELOG.md
 └── README.md
 ```
 
@@ -134,11 +158,10 @@ qapulsebysk-playwright-boilerplate/
 
 ## 🚀 Quick Start
 
-### 1. Fork & Clone
+### 1. Fork & Clone (TypeScript)
 
 ```bash
-# Fork via GitHub UI, then:
-git clone https://github.com/YOUR_USERNAME/qapulsebysk-playwright-boilerplate.git
+git clone https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate.git
 cd qapulsebysk-playwright-boilerplate
 ```
 
@@ -153,7 +176,7 @@ npx playwright install
 
 ```bash
 cp .env.example .env
-# Edit .env — set BASE_URL, credentials etc.
+# Edit .env with your values
 ```
 
 ### 4. Run Tests
@@ -166,8 +189,7 @@ npm test
 
 ## 🧪 Running Tests
 
-### By Test Type
-
+### By Type
 ```bash
 npm run test:e2e          # End-to-end UI tests (Chromium)
 npm run test:api          # API tests
@@ -177,7 +199,6 @@ npm run test:component    # Component tests
 ```
 
 ### By Tag
-
 ```bash
 npm run test:smoke        # @smoke — fast sanity check
 npm run test:regression   # @regression — full suite
@@ -186,135 +207,73 @@ npm run test:critical     # @critical — must-pass tests
 ```
 
 ### By Browser
-
 ```bash
-npm run test:chromium     # Chrome only
-npm run test:firefox      # Firefox only
-npm run test:webkit       # Safari only
+npm run test:chromium
+npm run test:firefox
+npm run test:webkit
 ```
 
-### Debug & Development
-
+### Debug & Dev
 ```bash
-npm run test:debug        # Step-through debugger
-npm run test:headed       # Watch tests run in browser
-npm run test:update-snapshots  # Regenerate visual baselines
+npm run test:debug
+npm run test:headed
+npm run test:update-snapshots
 ```
 
 ---
 
 ## 📊 Reporting
 
-This boilerplate ships with **4 reporters** out of the box:
-
-### 1. 🌐 HTML Report (Playwright built-in)
 ```bash
-npm run report:html
-# Opens playwright-report/index.html in browser
+npm run report:html           # Open Playwright HTML report
+npm run report:allure         # Generate + open Allure dashboard
+npm run report:json           # Terminal summary (pass/fail/skip counts)
 ```
 
-### 2. 📊 Allure Report (Rich dashboard with history & trends)
-```bash
-npm run report:allure
-# Generates + opens Allure dashboard
-```
-> 💡 Requires [Allure CLI](https://docs.qameta.io/allure/#_installing_a_commandline) installed globally: `npm install -g allure-commandline`
-
-### 3. 📋 JSON Summary (Quick terminal summary)
-```bash
-npm run report:json
-# Prints pass/fail/skip counts to terminal
-```
-
-### 4. 🏢 JUnit XML (CI integration)
-Auto-generated at `test-results/junit.xml` on every run — consumed by Jenkins and Azure DevOps automatically.
-
----
-
-## 📸 Visual Regression
-
-Generate baselines (first time or after intentional UI changes):
-
-```bash
-npm run test:update-snapshots
-```
-
-Run visual tests (compares against saved baselines):
-
-```bash
-npm run test:visual
-```
-
-> Baselines are stored in `tests/visual/snapshots/` and committed to the repo.
+See [docs/REPORTING.md](./docs/REPORTING.md) for full details.
 
 ---
 
 ## ♿ Accessibility Testing
 
-Runs WCAG 2.1 AA checks using axe-core on both:
-- `https://the-internet.herokuapp.com` — demo site
-- `https://www.skakarh.com` — QA Pulse brand site
-
-```bash
-npm run test:a11y
-```
-
----
-
-## 🔌 API Testing
-
-Uses Playwright's built-in `request` context via `ApiClient`:
+Powered by `@axe-core/playwright` via the `A11yHelper` class:
 
 ```typescript
-// tests/api/posts.spec.ts
-import { test, expect } from "../../src/fixtures/apiFixture";
-import { PostsApi } from "../../src/api/endpoints/PostsApi";
+const a11y = new A11yHelper(page);
 
-test("GET /posts returns list @smoke @api", async ({ apiClient }) => {
-  const postsApi = new PostsApi(apiClient);
-  const response = await postsApi.getAllPosts();
-  expect(response.status()).toBe(200);
-});
+await a11y.assertNoViolations();              // Full WCAG 2.1 AA scan
+await a11y.assertNoCriticalViolations();      // Critical only
+await a11y.assertKeyboardNavigable();         // Tab order check
+await a11y.assertImagesHaveAltText();         // Alt text check
+await a11y.assertFormLabels();                // Label association
+await a11y.assertSingleH1();                  // Heading structure
+await a11y.assertAriaLandmarks();             // main + nav landmarks
+await a11y.assertComponentAccessible("nav");  // Scoped scan
 ```
+
+See [docs/ACCESSIBILITY.md](./docs/ACCESSIBILITY.md) for full guide.
 
 ---
 
 ## ✍️ Writing Your First Test
 
-**Step 1** — Create a page object:
 ```typescript
 // src/pages/example/MyPage.ts
 import { BasePage } from "../BasePage";
-
 export class MyPage extends BasePage {
   readonly heading = this.page.locator("h1");
-
-  async open() {
-    await super.open("/my-page");
-  }
-
-  async getHeading() {
-    return this.heading.innerText();
-  }
+  async open() { await super.open("/my-page"); }
+  async getHeading() { return this.heading.innerText(); }
 }
-```
 
-**Step 2** — Register in fixture:
-```typescript
 // src/fixtures/pageFixture.ts — add:
-myPage: async ({ page }, use) => {
-  await use(new MyPage(page));
-},
-```
+myPage: async ({ page }, use) => { await use(new MyPage(page)); }
 
-**Step 3** — Write your spec:
-```typescript
 // tests/e2e/my-page.spec.ts
 import { test, expect } from "../../src/fixtures/pageFixture";
-
-test("page has correct heading @smoke @e2e", async ({ myPage }) => {
+test("page heading @smoke @e2e", async ({ myPage }) => {
   await myPage.open();
-  expect(await myPage.getHeading()).toBe("My Page Title");
+  expect(await myPage.getHeading()).toBe("My Title");
 });
 ```
 
@@ -327,12 +286,13 @@ test("page has correct heading @smoke @e2e", async ({ myPage }) => {
 | `@smoke` | Quick sanity — run before every deploy |
 | `@regression` | Full suite — run on PRs and nightly |
 | `@sanity` | Post-deploy health check |
-| `@critical` | Must-pass — failures = block release |
+| `@critical` | Must-pass — failures block release |
 | `@e2e` | End-to-end UI tests |
 | `@api` | API-only tests |
 | `@visual` | Visual regression |
 | `@a11y` | Accessibility |
 | `@component` | Component-level |
+| `@slow` | Long-running tests |
 
 Run any tag: `npx playwright test --grep @critical`
 
@@ -343,9 +303,9 @@ Run any tag: `npx playwright test --grep @critical`
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `BASE_URL` | `https://the-internet.herokuapp.com` | E2E test target |
-| `BRAND_URL` | `https://www.skakarh.com` | Brand site (visual/a11y) |
+| `BRAND_URL` | `https://www.skakarh.com` | Brand site for visual/a11y |
 | `API_BASE_URL` | `https://jsonplaceholder.typicode.com` | API test base |
-| `TEST_USERNAME` | `tomsmith` | Login test user |
+| `TEST_USERNAME` | `tomsmith` | Login test username |
 | `TEST_PASSWORD` | `SuperSecretPassword!` | Login test password |
 | `CI` | _(auto-set)_ | Switches to CI reporter mode |
 
@@ -354,26 +314,13 @@ Run any tag: `npx playwright test --grep @critical`
 ## 🔁 CI/CD
 
 ### GitHub Actions
-Triggers on push to `main` and all PRs. Runs 4 parallel shards and publishes HTML report to GitHub Pages. PR gets auto-commented with report link.
+Auto-triggers on push to `master` and all PRs. Runs 4 parallel shards, publishes HTML report to GitHub Pages, comments report link on PRs.
 
 ### Jenkins
-```groovy
-// Use ci/Jenkinsfile in your Jenkins pipeline
-```
+Use `ci/Jenkinsfile` in your Jenkins pipeline.
 
 ### Azure DevOps
-```yaml
-# Use ci/azure-pipelines.yml in your Azure DevOps pipeline
-```
-
----
-
-## 🌿 Branches
-
-| Branch | Language | Status |
-|--------|----------|--------|
-| `main` | TypeScript | ✅ Active |
-| `javascript` | JavaScript | ✅ Active |
+Use `ci/azure-pipelines.yml` in your Azure DevOps pipeline.
 
 ---
 
@@ -381,17 +328,15 @@ Triggers on push to `main` and all PRs. Runs 4 parallel shards and publishes HTM
 
 We welcome contributions! See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
-1. Fork the repo
-2. Create a feature branch: `git checkout -b feat/amazing-feature`
-3. Commit: `git commit -m "feat: add amazing feature"`
-4. Push: `git push origin feat/amazing-feature`
-5. Open a Pull Request ✅
+- TypeScript fixes/features → PR to `main`
+- JavaScript fixes/features → PR to `javascript`
+- See [BRANCHES.md](./BRANCHES.md) for branch strategy
 
 ---
 
 ## 📄 License
 
-MIT © [QA Pulse by SK](https://www.skakarh.com) — free to use, modify, and distribute.
+MIT © [QA Pulse by SK](https://www.skakarh.com)
 
 ---
 
