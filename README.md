@@ -30,7 +30,7 @@
 
 | Branch | Language | Clone Command |
 |--------|----------|---------------|
-| ✅ [`master`](https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate/tree/main) ← **You are here** | **TypeScript** | `git clone https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate.git` |
+| ✅ [`master`](https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate/tree/master) ← **You are here** | **TypeScript** | `git clone https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate.git` |
 | 🟡 [`javascript`](https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate/tree/javascript) | **JavaScript** | `git clone -b javascript https://github.com/ShahnawazKakarh/qapulsebysk-playwright-boilerplate.git` |
 
 > ⚠️ These branches are **independent** and are never merged into each other. See [BRANCHES.md](./BRANCHES.md) for full details.
