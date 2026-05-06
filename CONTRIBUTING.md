@@ -5,17 +5,16 @@ Thank you for your interest in contributing! 🎉
 ## How to Contribute
 
 1. **Fork** the repository
-2. **Clone** your fork: `git clone https://github.com/YOUR_USERNAME/qapulsebysk-playwright-boilerplate.git`
+2. **Clone** your fork: `git clone https://github.com/YOUR_USERNAME/playwright-boilerplate.git`
 3. **Create a branch**: `git checkout -b feat/your-feature-name`
 4. **Make your changes**
 5. **Lint & typecheck**: `npm run lint && npm run typecheck`
 6. **Commit**: `git commit -m "feat: describe your change"`
 7. **Push**: `git push origin feat/your-feature-name`
-8. **Open a Pull Request** against `main`
+8. **Open a Pull Request** against `master`
 
 ## Commit Message Format
 
-Use conventional commits:
 - `feat:` — new feature
 - `fix:` — bug fix
 - `chore:` — maintenance
@@ -29,6 +28,12 @@ Use conventional commits:
 - All new page objects must extend `BasePage`
 - All new tests must have at least one tag (e.g. `@smoke`)
 
+## Branch Strategy
+
+- TypeScript fixes/features → PR to `master`
+- JavaScript fixes/features → PR to `javascript`
+- See [BRANCHES.md](./BRANCHES.md) for details
+
 ## Questions?
 
-Visit [www.skakarh.com](https://www.skakarh.com) or open an issue.
+Visit [www.skakarh.com](https://www.skakarh.com) or open an issue on [GitHub](https://github.com/QAPulse-by-SK/playwright-boilerplate/issues).
