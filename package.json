@@ -46,6 +46,7 @@
   "license": "MIT",
   "devDependencies": {
     "@axe-core/playwright": "^4.9.1",
+    "@faker-js/faker": "^10.4.0",
     "@playwright/test": "^1.46.0",
     "allure-commandline": "^2.29.0",
     "allure-playwright": "^3.0.0",
