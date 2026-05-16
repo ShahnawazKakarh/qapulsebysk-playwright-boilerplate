@@ -24,16 +24,97 @@
 
 ---
 
-## 🌿 Choose Your Language
+## 🌿 Choose Your Branch
 
-> **Two parallel branches — same features, different language. Pick yours and clone directly.**
+| Branch | Description | Clone Command |
+|--------|-------------|---------------|
+| ✅ [`master`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/master) | **TypeScript** — core boilerplate | `git clone https://github.com/QAPulse-by-SK/playwright-boilerplate.git` |
+| 🟡 [`javascript`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/javascript) | **JavaScript** — same features | `git clone -b javascript https://github.com/QAPulse-by-SK/playwright-boilerplate.git` |
+| 🔵 [`with-packages`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/with-packages) ← **You are here** | **TS + QAPulseSK Packages** | `git clone -b with-packages https://github.com/QAPulse-by-SK/playwright-boilerplate.git` |
 
-| Branch | Language | Clone Command |
-|--------|----------|---------------|
-| ✅ [`master`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/master) ← **You are here** | **TypeScript** | `git clone https://github.com/QAPulse-by-SK/playwright-boilerplate.git` |
-| 🟡 [`javascript`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/javascript) | **JavaScript** | `git clone -b javascript https://github.com/QAPulse-by-SK/playwright-boilerplate.git` |
+> ⚠️ Branches are **independent** and never merged into each other. See [BRANCHES.md](./BRANCHES.md)
 
-> ⚠️ These branches are **independent** and are never merged into each other. See [BRANCHES.md](./BRANCHES.md) for full details.
+---
+
+## 📦 QAPulseSK Packages — Integrated & Tested
+
+> This branch integrates and tests the official **QAPulse by SK** npm packages against real-world applications.
+
+### `qapulsesk-assert` — Assertion Library
+[![npm](https://img.shields.io/badge/npm-qapulsesk--assert-cb0000?logo=npm)](https://www.npmjs.com/package/qapulsesk-assert)
+
+All-in-one assertion library for Playwright, Cypress, Jest, Vitest & WebdriverIO.
+
+```typescript
+import { qaPulseAssert, assertFuzzyMatch, assertSchema, assertResponseTime } from "qapulsesk-assert";
+
+const qa = qaPulseAssert(page);
+
+// Fuzzy text matching — handles typos and dynamic content
+await qa.toFuzzyHaveText("h1", "Welcome to the internet", { threshold: 0.8 });
+
+// API schema validation
+assertSchema(response, { id: "number", title: "string", body: "string" });
+
+// Performance SLA assertion
+assertResponseTime({ status: 200, headers: {}, body: {}, duration: 1200 }, 5000);
+
+// Zero-config accessibility check
+await qa.toBeAccessible();
+```
+
+### `qapulsesk-report` — Custom Reporter
+[![npm](https://img.shields.io/badge/npm-qapulsesk--report-cb0000?logo=npm)](https://www.npmjs.com/package/qapulsesk-report)
+
+Dark-theme HTML reports, AI failure analysis, Slack/Teams webhooks.
+
+```typescript
+// playwright.config.ts
+reporter: [["qapulsesk-report", {
+  reportTitle: "My QA Report",
+  openAfterGeneration: true,
+  webhooks: { slack: { url: process.env.SLACK_WEBHOOK_URL } }
+}]]
+```
+
+---
+
+## 🏢 Real-World Testing — SuiteCRM Demo
+
+This branch includes tests against **SuiteCRM** (real enterprise CRM):
+
+```
+tests/packages/
+  ├── assert.spec.ts     — 23 tests, qapulsesk-assert on standard sites
+  └── suitecrm.spec.ts   — 26 tests, qapulsesk-assert on real enterprise CRM
+```
+
+**Target:** `https://demo.suiteondemand.com` · Credentials: `will / will` (public demo)
+
+**What's tested:**
+- Auth (login/logout/session)
+- Navigation (module titles, page routing)
+- Accounts & Contacts (list columns, form fields, detail pages)
+- Performance SLA (all pages load within 8s)
+- Data integrity (object matching, batch content checks)
+- Accessibility (real CRM violation detection)
+
+---
+
+## 🆚 qapulsesk-assert vs Standard Playwright
+
+See **[docs/QAPULSESK-ASSERT-COMPARISON.md](./docs/QAPULSESK-ASSERT-COMPARISON.md)** for a full honest comparison.
+
+**Summary of unique value:**
+
+| Feature | Standard Playwright | qapulsesk-assert |
+|---|---|---|
+| Fuzzy text match | ❌ Write yourself | ✅ Built-in |
+| API schema validation | ❌ N separate checks | ✅ One call |
+| Response time SLA | ❌ Manual math | ✅ `assertResponseTime` |
+| Accessibility check | ⚠️ Needs axe setup | ✅ Zero-config |
+| AI semantic assertions | ❌ Does not exist | ✅ `toMean`, `satisfiesRule` |
+| Cross-framework | ❌ Framework-locked | ✅ Works everywhere |
 
 ---
 
@@ -48,10 +129,11 @@ This is a **fully wired, ready-to-fork Playwright boilerplate** built by **[QA P
 - ✅ Accessibility testing — WCAG 2.1 AA, keyboard nav, ARIA, focus, labels
 - ✅ 4 reporters — HTML, Allure, JUnit, JSON + custom summary
 - ✅ GitHub Actions (sharded + GitHub Pages), Jenkins, Azure DevOps
+- ✅ Slack CI notifications
+- ✅ Faker.js DataFactory — dynamic test data generation
 - ✅ Global setup/teardown with auth state management
-- ✅ Constants, Types, Logger utility
 - ✅ ESLint + Prettier + TypeScript strict mode
-- ✅ dotenv — no hardcoded secrets ever
+- ✅ QAPulseSK packages integration (`with-packages` branch)
 
 ---
 
@@ -63,15 +145,15 @@ This is a **fully wired, ready-to-fork Playwright boilerplate** built by **[QA P
 | 🌐 **E2E Testing** | Multi-browser: Chromium, Firefox, WebKit, Mobile |
 | 🔌 **API Testing** | ApiClient base class + endpoint layer |
 | 📸 **Visual Regression** | `toHaveScreenshot()` with baseline management |
-| ♿ **Accessibility** | axe-core WCAG 2.1 AA · keyboard nav · ARIA · focus · form labels · H1 · colour contrast |
+| ♿ **Accessibility** | axe-core WCAG 2.1 AA · keyboard nav · ARIA · focus · form labels |
 | 🧩 **Component Testing** | Isolated component specs |
 | 📊 **Reporting** | HTML + Allure + JUnit + JSON + Custom Terminal Summary |
-| 🏷️ **Test Tags** | `@smoke` `@regression` `@sanity` `@e2e` `@api` `@visual` `@a11y` `@component` `@critical` `@slow` |
+| 🏷️ **Test Tags** | `@smoke` `@regression` `@sanity` `@e2e` `@api` `@visual` `@a11y` `@packages` `@suitecrm` |
 | 🔁 **CI/CD** | GitHub Actions (sharded + GitHub Pages + PR comments) · Jenkins · Azure DevOps |
+| 🔔 **Slack** | Pass/fail notifications via `SLACK_WEBHOOK_URL` secret |
+| 🧪 **DataFactory** | Faker.js — createUser, createPost, createAddress, createProduct |
 | 🛡️ **Code Quality** | ESLint · Prettier · TypeScript strict |
-| 🔐 **Config** | dotenv · `.env.example` · env-based baseURL |
 | 🪵 **Logging** | Colour-coded logger with timestamps |
-| 🔧 **Advanced** | Network interception · Data-driven · Drag & drop · JS alerts · Viewport testing |
 
 ---
 
@@ -79,43 +161,33 @@ This is a **fully wired, ready-to-fork Playwright boilerplate** built by **[QA P
 
 ```
 playwright-boilerplate/
-│
-├── 📂 .github/workflows/
-│   └── playwright.yml              # Sharded CI + GitHub Pages + PR comments
-├── 📂 ci/
-│   ├── Jenkinsfile
-│   └── azure-pipelines.yml
+├── 📂 .github/workflows/playwright.yml
+├── 📂 ci/ (Jenkinsfile + azure-pipelines.yml)
 ├── 📂 docs/
 │   ├── ARCHITECTURE.md
 │   ├── REPORTING.md
-│   └── ACCESSIBILITY.md
+│   ├── ACCESSIBILITY.md
+│   ├── SLACK-NOTIFICATIONS.md
+│   └── QAPULSESK-ASSERT-COMPARISON.md  ← NEW
 ├── 📂 src/
-│   ├── pages/                      # BasePage + page objects
-│   ├── components/                 # Reusable UI components
-│   ├── api/                        # ApiClient + endpoint classes
-│   ├── fixtures/                   # pageFixture + apiFixture
-│   ├── helpers/                    # a11yHelper, waitHelpers, randomData
-│   ├── constants/                  # URLS, ROUTES, CREDENTIALS, TAGS
-│   ├── types/                      # Shared TypeScript interfaces
-│   └── utils/                      # logger
+│   ├── pages/                    # BasePage + page objects
+│   ├── api/                      # ApiClient + endpoints
+│   ├── fixtures/                 # pageFixture + apiFixture
+│   ├── helpers/                  # a11yHelper, waitHelpers, randomData, dataFactory
+│   ├── constants/                # URLS, ROUTES, CREDENTIALS, TAGS
+│   └── utils/                    # logger
 ├── 📂 tests/
-│   ├── e2e/                        # UI tests + advanced examples
-│   ├── api/                        # API tests
-│   ├── visual/                     # Visual regression
-│   ├── accessibility/              # Axe-core a11y tests
-│   └── component/                  # Component tests
-├── 📂 reporters/
-│   └── jsonSummary.js
-├── 📂 test-data/
-│   └── users.json
+│   ├── e2e/                      # UI tests + advanced examples
+│   ├── api/                      # API tests
+│   ├── visual/                   # Visual regression
+│   ├── accessibility/            # Axe-core a11y tests
+│   ├── component/                # Component tests
+│   └── packages/                 # QAPulseSK packages tests ← NEW
+│       ├── assert.spec.ts        # 23 tests — qapulsesk-assert
+│       └── suitecrm.spec.ts      # 26 tests — SuiteCRM real-world
 ├── global-setup.ts
 ├── global-teardown.ts
-├── .env.example
 ├── playwright.config.ts
-├── tsconfig.json
-├── BRANCHES.md
-├── CONTRIBUTING.md
-├── CHANGELOG.md
 └── README.md
 ```
 
@@ -124,13 +196,23 @@ playwright-boilerplate/
 ## 🚀 Quick Start
 
 ```bash
-# Clone (TypeScript)
+# TypeScript (master)
 git clone https://github.com/QAPulse-by-SK/playwright-boilerplate.git
 cd playwright-boilerplate
 npm install
 npx playwright install
 cp .env.example .env
 npm test
+
+# With QAPulseSK packages (this branch)
+git clone -b with-packages https://github.com/QAPulse-by-SK/playwright-boilerplate.git
+cd playwright-boilerplate
+npm install
+npx playwright install
+npm test
+
+# Run package tests only
+npx playwright test tests/packages/ --project=chromium
 ```
 
 ---
@@ -140,18 +222,15 @@ npm test
 ```bash
 npm run test:e2e          # E2E UI tests
 npm run test:api          # API tests
-npm run test:visual       # Visual regression
 npm run test:a11y         # Accessibility
-npm run test:component    # Component tests
 npm run test:smoke        # @smoke tag
 npm run test:regression   # @regression tag
-npm run test:critical     # @critical tag
 npm run test:chromium     # Chrome only
-npm run test:firefox      # Firefox only
-npm run test:webkit       # Safari only
-npm run test:debug        # Debugger
 npm run test:headed       # Watch in browser
-npm run test:update-snapshots  # Regenerate visual baselines
+
+# Package tests (with-packages branch)
+npx playwright test tests/packages/assert.spec.ts    # 23 assert tests
+npx playwright test tests/packages/suitecrm.spec.ts  # 26 SuiteCRM tests
 ```
 
 ---
@@ -162,22 +241,6 @@ npm run test:update-snapshots  # Regenerate visual baselines
 npm run report:html       # Playwright HTML report
 npm run report:allure     # Allure dashboard
 npm run report:json       # Terminal summary
-```
-
----
-
-## ♿ Accessibility Testing
-
-```typescript
-const a11y = new A11yHelper(page);
-await a11y.assertNoViolations();           // Full WCAG 2.1 AA
-await a11y.assertNoCriticalViolations();   // Critical only
-await a11y.assertKeyboardNavigable();      // Tab order
-await a11y.assertImagesHaveAltText();      // Alt text
-await a11y.assertFormLabels();             // Label association
-await a11y.assertSingleH1();              // Heading structure
-await a11y.assertAriaLandmarks();         // ARIA landmarks
-await a11y.assertComponentAccessible("nav"); // Scoped scan
 ```
 
 ---
@@ -194,18 +257,11 @@ await a11y.assertComponentAccessible("nav"); // Scoped scan
 
 ---
 
-## 🔁 CI/CD
-
-- **GitHub Actions** — Sharded · GitHub Pages · PR comments
-- **Jenkins** — `ci/Jenkinsfile`
-- **Azure DevOps** — `ci/azure-pipelines.yml`
-
----
-
 ## 🤝 Contributing
 
 - TypeScript → PR to `master`
 - JavaScript → PR to `javascript`
+- Package tests → PR to `with-packages`
 - See [BRANCHES.md](./BRANCHES.md) · [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ---
