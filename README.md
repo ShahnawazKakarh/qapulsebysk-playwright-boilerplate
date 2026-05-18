@@ -24,16 +24,27 @@
 
 ---
 
-## 🌿 Choose Your Language
+## 🌿 Choose Your Branch
 
-> **Two parallel branches — same features, different language. Pick yours and clone directly.**
+| Branch | Description | Clone Command |
+|--------|-------------|---------------|
+| ✅ [`master`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/master) ← **You are here** | **TypeScript** — core boilerplate | `git clone https://github.com/QAPulse-by-SK/playwright-boilerplate.git` |
+| 🟡 [`javascript`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/javascript) | **JavaScript** — same features | `git clone -b javascript https://github.com/QAPulse-by-SK/playwright-boilerplate.git` |
+| 🔵 [`with-packages`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/with-packages) | **TS + QAPulseSK packages** | `git clone -b with-packages https://github.com/QAPulse-by-SK/playwright-boilerplate.git` |
 
-| Branch | Language | Clone Command |
-|--------|----------|---------------|
-| ✅ [`master`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/master) ← **You are here** | **TypeScript** | `git clone https://github.com/QAPulse-by-SK/playwright-boilerplate.git` |
-| 🟡 [`javascript`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/javascript) | **JavaScript** | `git clone -b javascript https://github.com/QAPulse-by-SK/playwright-boilerplate.git` |
+> ⚠️ Branches are **independent** — never merged. See [BRANCHES.md](./BRANCHES.md)
 
-> ⚠️ These branches are **independent** and are never merged into each other. See [BRANCHES.md](./BRANCHES.md) for full details.
+---
+
+## 📦 QAPulseSK Packages (`with-packages` branch)
+
+> Want to see the full ecosystem in action? Switch to the [`with-packages`](https://github.com/QAPulse-by-SK/playwright-boilerplate/tree/with-packages) branch which integrates all 3 QAPulseSK npm packages with **101 passing tests** against real-world sites including SuiteCRM.
+
+| Package | What It Does |
+|---------|--------------|
+| [`qapulsesk-assert`](https://www.npmjs.com/package/qapulsesk-assert) | Fuzzy assertions, schema validation, AI-powered checks |
+| [`qapulsesk-report`](https://www.npmjs.com/package/qapulsesk-report) | Dark-theme HTML reports, Slack webhooks, AI failure analysis |
+| [`qapulsesk-gen`](https://www.npmjs.com/package/qapulsesk-gen) | HAR → tests, recordings → tests, plain English → tests |
 
 ---
 
@@ -48,10 +59,10 @@ This is a **fully wired, ready-to-fork Playwright boilerplate** built by **[QA P
 - ✅ Accessibility testing — WCAG 2.1 AA, keyboard nav, ARIA, focus, labels
 - ✅ 4 reporters — HTML, Allure, JUnit, JSON + custom summary
 - ✅ GitHub Actions (sharded + GitHub Pages), Jenkins, Azure DevOps
+- ✅ Slack CI notifications
+- ✅ Faker.js DataFactory — dynamic test data generation
 - ✅ Global setup/teardown with auth state management
-- ✅ Constants, Types, Logger utility
 - ✅ ESLint + Prettier + TypeScript strict mode
-- ✅ dotenv — no hardcoded secrets ever
 
 ---
 
@@ -63,15 +74,15 @@ This is a **fully wired, ready-to-fork Playwright boilerplate** built by **[QA P
 | 🌐 **E2E Testing** | Multi-browser: Chromium, Firefox, WebKit, Mobile |
 | 🔌 **API Testing** | ApiClient base class + endpoint layer |
 | 📸 **Visual Regression** | `toHaveScreenshot()` with baseline management |
-| ♿ **Accessibility** | axe-core WCAG 2.1 AA · keyboard nav · ARIA · focus · form labels · H1 · colour contrast |
+| ♿ **Accessibility** | axe-core WCAG 2.1 AA · keyboard nav · ARIA · focus · form labels |
 | 🧩 **Component Testing** | Isolated component specs |
 | 📊 **Reporting** | HTML + Allure + JUnit + JSON + Custom Terminal Summary |
-| 🏷️ **Test Tags** | `@smoke` `@regression` `@sanity` `@e2e` `@api` `@visual` `@a11y` `@component` `@critical` `@slow` |
-| 🔁 **CI/CD** | GitHub Actions (sharded + GitHub Pages + PR comments) · Jenkins · Azure DevOps |
+| 🏷️ **Test Tags** | `@smoke` `@regression` `@sanity` `@e2e` `@api` `@visual` `@a11y` `@component` `@critical` |
+| 🔁 **CI/CD** | GitHub Actions (sharded + Pages + PR comments) · Jenkins · Azure DevOps |
+| 🔔 **Slack** | Pass/fail notifications via `SLACK_WEBHOOK_URL` secret |
+| 🧪 **DataFactory** | Faker.js — createUser, createPost, createAddress, createProduct |
 | 🛡️ **Code Quality** | ESLint · Prettier · TypeScript strict |
-| 🔐 **Config** | dotenv · `.env.example` · env-based baseURL |
 | 🪵 **Logging** | Colour-coded logger with timestamps |
-| 🔧 **Advanced** | Network interception · Data-driven · Drag & drop · JS alerts · Viewport testing |
 
 ---
 
@@ -88,13 +99,14 @@ playwright-boilerplate/
 ├── 📂 docs/
 │   ├── ARCHITECTURE.md
 │   ├── REPORTING.md
-│   └── ACCESSIBILITY.md
+│   ├── ACCESSIBILITY.md
+│   └── SLACK-NOTIFICATIONS.md
 ├── 📂 src/
 │   ├── pages/                      # BasePage + page objects
 │   ├── components/                 # Reusable UI components
 │   ├── api/                        # ApiClient + endpoint classes
 │   ├── fixtures/                   # pageFixture + apiFixture
-│   ├── helpers/                    # a11yHelper, waitHelpers, randomData
+│   ├── helpers/                    # a11yHelper, waitHelpers, randomData, dataFactory
 │   ├── constants/                  # URLS, ROUTES, CREDENTIALS, TAGS
 │   ├── types/                      # Shared TypeScript interfaces
 │   └── utils/                      # logger
@@ -124,7 +136,6 @@ playwright-boilerplate/
 ## 🚀 Quick Start
 
 ```bash
-# Clone (TypeScript)
 git clone https://github.com/QAPulse-by-SK/playwright-boilerplate.git
 cd playwright-boilerplate
 npm install
@@ -170,14 +181,14 @@ npm run report:json       # Terminal summary
 
 ```typescript
 const a11y = new A11yHelper(page);
-await a11y.assertNoViolations();           // Full WCAG 2.1 AA
-await a11y.assertNoCriticalViolations();   // Critical only
-await a11y.assertKeyboardNavigable();      // Tab order
-await a11y.assertImagesHaveAltText();      // Alt text
-await a11y.assertFormLabels();             // Label association
-await a11y.assertSingleH1();              // Heading structure
-await a11y.assertAriaLandmarks();         // ARIA landmarks
-await a11y.assertComponentAccessible("nav"); // Scoped scan
+await a11y.assertNoViolations();
+await a11y.assertNoCriticalViolations();
+await a11y.assertKeyboardNavigable();
+await a11y.assertImagesHaveAltText();
+await a11y.assertFormLabels();
+await a11y.assertSingleH1();
+await a11y.assertAriaLandmarks();
+await a11y.assertComponentAccessible("nav");
 ```
 
 ---
@@ -206,6 +217,7 @@ await a11y.assertComponentAccessible("nav"); // Scoped scan
 
 - TypeScript → PR to `master`
 - JavaScript → PR to `javascript`
+- Package tests → PR to `with-packages`
 - See [BRANCHES.md](./BRANCHES.md) · [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ---
